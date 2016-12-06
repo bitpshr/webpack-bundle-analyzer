@@ -206,7 +206,7 @@ class Folder extends Node {
       statSize: this.size,
       parsedSize: this.parsedSize,
       gzipSize: this.gzipSize,
-      groups: _.invokeMap(this.children, 'toChartData')
+      children: _.invokeMap(this.children, 'toChartData')
     };
   }
 

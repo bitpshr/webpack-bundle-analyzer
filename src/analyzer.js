@@ -99,7 +99,7 @@ function getViewerData(bundleStats, bundleDir, opts) {
       statSize: asset.tree.size,
       parsedSize: asset.parsedSize,
       gzipSize: asset.gzipSize,
-      groups: _.invokeMap(asset.tree.children, 'toChartData')
+      children: _.invokeMap(asset.tree.children, 'toChartData')
     });
   }, []);
 }
