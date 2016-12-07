@@ -1,12 +1,12 @@
 # Webpack Bundle Analyzer
-Webpack plugin and CLI utility that represents bundle content as convenient interactive zoomable treemap
+Webpack plugin and CLI utility that represents bundle content either as an interactive zoomable treemap or a sunburst chart
 
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]
 
 ## What is this for?
 Just take a look at this demo:
 
-![webpack bundle analyzer zoomable treemap](https://cloud.githubusercontent.com/assets/302213/20628702/93f72404-b338-11e6-92d4-9a365550a701.gif)
+![webpack bundle analyzer sunburst chart](https://s28.postimg.org/wiw3zkbkt/sunburst.gif)
 
 This module will help you:
 
@@ -23,12 +23,12 @@ There are two ways to use this module:
 
 ### As plugin
 ```sh
-npm install --save-dev webpack-bundle-analyzer
+npm install --save-dev webpack-bundle-analyzer-sunburst
 ```
 
 In `webpack.config.js`:
 ```js
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer-sunburst').BundleAnalyzerPlugin;
 
 // ...
 plugins: [new BundleAnalyzerPlugin()]
@@ -49,6 +49,8 @@ new BundleAnalyzerPlugin({
   // Path to bundle report file that will be generated in `static` mode.
   // Relative to bundles output directory.
   reportFilename: 'report.html',
+  // Type of report to generate. Can be `treemap` or `sunburst`.
+  reportType: 'treemap',
   // Automatically open report in default browser
   openAnalyzer: true,
   // If `true`, Webpack Stats JSON file will be generated in bundles output directory
@@ -81,6 +83,6 @@ Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on contributing 
 
 [MIT](LICENSE)
 
-[downloads-image]: https://img.shields.io/npm/dt/webpack-bundle-analyzer.svg
-[npm-url]: https://www.npmjs.com/package/webpack-bundle-analyzer
-[npm-image]: https://img.shields.io/npm/v/webpack-bundle-analyzer.svg
+[downloads-image]: https://img.shields.io/npm/dt/webpack-bundle-analyzer-sunburst.svg
+[npm-url]: https://www.npmjs.com/package/webpack-bundle-analyzer-sunburst
+[npm-image]: https://img.shields.io/npm/v/webpack-bundle-analyzer-sunburst.svg

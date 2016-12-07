@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600');
+
+* {
+	box-sizing: border-box;
+}
+
+.container {
+	background-color: rgb(18, 21, 29);
+	color: #FFF;
+	font-family: 'Open Sans', sans-serif;
+	position: relative;
+	overflow: hidden;
+	font-size: 0;
+	padding: 100px;
+	width: 100%;
+	height: 100%;
+}
+
+path {
+	stroke: #FFF;
+	fill-rule: evenodd;
+}
+
+.sunburst {
+	width: 60%;
+	height: 100%;
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.sunburst svg {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	transform: translateY(-50%);
+}
+
+.info {
+	width: 40%;
+	height: 100%;
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.infoInner {
+	line-height: 1;
+	font-weight: lighter;
+	position: absolute;
+	top: 50%;
+	right: 0%;
+	transform: translateY(-50%);
+	padding: 100px;
+	white-space: nowrap;
+}
+
+.filename {
+	font-size: 30px;
+	display: inline-block;
+	vertical-align: top;
+	padding-right: 40px;
+}
+
+.contents {
+	display: inline-block;
+	vertical-align: top;
+	border-left: 1px solid #898989;
+	padding-left: 40px;
+}
+
+.size {
+	font-size: 30px;
+}
+
+.type {
+	font-size: 15px;
+	color: #898989;
+	margin-bottom: 20px;
+}
+
+.type:last-child {
+	margin-bottom: 0;
+}
