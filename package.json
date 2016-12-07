@@ -1,17 +1,17 @@
 {
-  "name": "webpack-bundle-analyzer",
-  "version": "2.1.1",
-  "description": "Webpack plugin and CLI utility that represents bundle content as convenient interactive zoomable treemap",
-  "author": "Yury Grunin <grunin.ya@ya.ru>",
+  "name": "webpack-bundle-analyzer-sunburst",
+  "version": "1.0.0",
+  "description": "Webpack plugin and CLI utility that represents bundle content either as an interactive zoomable treemap or a sunburst chart",
+  "author": "Paul Bouchon <paul@paulbouchon.net>",
   "license": "MIT",
-  "homepage": "https://github.com/th0r/webpack-bundle-analyzer",
-  "changelog": "https://github.com/th0r/webpack-bundle-analyzer/blob/master/CHANGELOG.md",
+  "homepage": "https://github.com/bitpshr/webpack-bundle-analyzer",
+  "changelog": "https://github.com/bitpshr/webpack-bundle-analyzer/blob/master/CHANGELOG.md",
   "bugs": {
-    "url": "https://github.com/th0r/webpack-bundle-analyzer/issues"
+    "url": "https://github.com/bitpshr/webpack-bundle-analyzer/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/th0r/webpack-bundle-analyzer.git"
+    "url": "git+https://github.com/bitpshr/webpack-bundle-analyzer.git"
   },
   "main": "lib/index.js",
   "bin": "lib/bin/analyzer.js",

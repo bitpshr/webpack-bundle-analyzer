@@ -40,13 +40,13 @@ Now go to your own project directory, and tell `npm` or `yarn` to use the local 
 ```sh
 cd /path/to/my/own/project
 # If you're using yarn, run this:
-yarn link webpack-bundle-analyzer
+yarn link webpack-bundle-analyzer-sunburst
 # ...and if you're not, and you're using just npm in your own
 # project, run this:
-npm link webpack-bundle-analyzer
+npm link webpack-bundle-analyzer-sunburst
 ```
 
-Now when you call `require('webpack-bundle-analyzer')` in your own project, you will actually be using the local copy of the `webpack-bundle-analyzer` project.
+Now when you call `require('webpack-bundle-analyzer-sunburst')` in your own project, you will actually be using the local copy of the `webpack-bundle-analyzer` project.
 
 If your own project's Webpack config has `BundleAnalyzerPlugin` configured with `analyzerMode: 'server'`, the changes you do inside `client` folder within your local copy of `webpack-bundle-analyzer` should now be immediately visible after you refresh your browser page. Hack away!
 

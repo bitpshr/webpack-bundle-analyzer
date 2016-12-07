@@ -23,12 +23,12 @@ There are two ways to use this module:
 
 ### As plugin
 ```sh
-npm install --save-dev webpack-bundle-analyzer
+npm install --save-dev webpack-bundle-analyzer-sunburst
 ```
 
 In `webpack.config.js`:
 ```js
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer-sunburst').BundleAnalyzerPlugin;
 
 // ...
 plugins: [new BundleAnalyzerPlugin()]
