@@ -68,8 +68,8 @@ describe('Webpack config', function () {
     clock.tick(1);
 
     await expectValidReport({
-      parsedSize: 439,
-      gzipSize: 179
+      parsedSize: 445,
+      gzipSize: 183
     });
   });
 });
@@ -79,8 +79,8 @@ async function expectValidReport(opts) {
     bundleFilename = 'bundle.js',
     reportFilename = 'report.html',
     bundleLabel = 'bundle.js',
-    statSize = 141,
-    parsedSize = 2776,
+    statSize = 147,
+    parsedSize = 2782,
     gzipSize = 799
   } = opts || {};
 
