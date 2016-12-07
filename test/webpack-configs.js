@@ -81,7 +81,7 @@ async function expectValidReport(opts) {
     bundleLabel = 'bundle.js',
     statSize = 141,
     parsedSize = 2776,
-    gzipSize = 796
+    gzipSize = 799
   } = opts || {};
 
   expect(fs.existsSync(`${__dirname}/output/${bundleFilename}`)).to.be.true;
