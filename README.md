@@ -1,5 +1,5 @@
 # Webpack Bundle Analyzer
-Webpack plugin and CLI utility that represents bundle content as convenient interactive zoomable treemap
+Webpack plugin and CLI utility that represents bundle content either as an interactive zoomable treemap or a sunburst chart
 
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]
 
@@ -49,6 +49,8 @@ new BundleAnalyzerPlugin({
   // Path to bundle report file that will be generated in `static` mode.
   // Relative to bundles output directory.
   reportFilename: 'report.html',
+  // Type of report to generate. Can be `treemap` or `sunburst`.
+  reportType: 'treemap',
   // Automatically open report in default browser
   openAnalyzer: true,
   // If `true`, Webpack Stats JSON file will be generated in bundles output directory

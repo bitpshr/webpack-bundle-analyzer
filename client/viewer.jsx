@@ -9,7 +9,7 @@ import styles from './viewer.css';
 window.addEventListener('load', () => {
   render((
     <div id="app">
-      {window.reportType === 'voronoi' && <ModulesTreemap data={window.chartData}/>}
+      {window.reportType === 'treemap' && <ModulesTreemap data={window.chartData}/>}
       {window.reportType === 'sunburst' && <Sunburst data={window.chartData}/>}
     </div>
   ), document.body);

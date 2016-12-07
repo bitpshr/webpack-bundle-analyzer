@@ -44,9 +44,9 @@ const program = commander
   )
   .option(
     '-t, --reportType <type>',
-    'Type of report to generate. Can be either `voronoi` or `sunburst`.' +
-    br('Default is `voronoi`.'),
-    'voronoi'
+    'Type of report to generate. Can be either `treemap` or `sunburst`.' +
+    br('Default is `treemap`.'),
+    'treemap'
   )
   .option(
     '-O, --no-open',

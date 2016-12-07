@@ -13,7 +13,7 @@ class BundleAnalyzerPlugin {
       analyzerMode: 'server',
       analyzerPort: 8888,
       reportFilename: 'report.html',
-      reportType: 'voronoi',
+      reportType: 'treemap',
       openAnalyzer: true,
       generateStatsFile: false,
       statsFilename: 'stats.json',
