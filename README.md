@@ -6,7 +6,7 @@ Webpack plugin and CLI utility that represents bundle content either as an inter
 ## What is this for?
 Just take a look at this demo:
 
-![webpack bundle analyzer zoomable treemap](https://cloud.githubusercontent.com/assets/302213/20628702/93f72404-b338-11e6-92d4-9a365550a701.gif)
+![webpack bundle analyzer sunburst chart](https://s28.postimg.org/wiw3zkbkt/sunburst.gif)
 
 This module will help you:
 
@@ -83,6 +83,6 @@ Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on contributing 
 
 [MIT](LICENSE)
 
-[downloads-image]: https://img.shields.io/npm/dt/webpack-bundle-analyzer.svg
-[npm-url]: https://www.npmjs.com/package/webpack-bundle-analyzer
-[npm-image]: https://img.shields.io/npm/v/webpack-bundle-analyzer.svg
+[downloads-image]: https://img.shields.io/npm/dt/webpack-bundle-analyzer-sunburst.svg
+[npm-url]: https://www.npmjs.com/package/webpack-bundle-analyzer-sunburst
+[npm-image]: https://img.shields.io/npm/v/webpack-bundle-analyzer-sunburst.svg
