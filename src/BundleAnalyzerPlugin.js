@@ -13,6 +13,7 @@ class BundleAnalyzerPlugin {
       analyzerMode: 'server',
       analyzerPort: 8888,
       reportFilename: 'report.html',
+      reportType: 'voronoi',
       openAnalyzer: true,
       generateStatsFile: false,
       statsFilename: 'stats.json',
@@ -82,7 +83,8 @@ class BundleAnalyzerPlugin {
       openBrowser: this.opts.openAnalyzer,
       port: this.opts.analyzerPort,
       bundleDir: this.compiler.outputPath,
-      logger: this.logger
+      logger: this.logger,
+      reportType: this.opts.reportType
     });
   }
 
@@ -91,7 +93,8 @@ class BundleAnalyzerPlugin {
       openBrowser: this.opts.openAnalyzer,
       reportFilename: this.opts.reportFilename,
       bundleDir: this.compiler.outputPath,
-      logger: this.logger
+      logger: this.logger,
+      reportType: this.opts.reportType
     });
   }
 

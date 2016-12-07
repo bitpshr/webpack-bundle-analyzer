@@ -44,6 +44,7 @@ function startServer(bundleStats, opts) {
   app.use('/', (req, res) => {
     res.render('viewer', {
       mode: 'server',
+      reportType: opts.reportType,
       chartData: JSON.stringify(chartData)
     });
   });
@@ -79,7 +80,8 @@ function generateReport(bundleStats, opts) {
     {
       mode: 'static',
       chartData: JSON.stringify(chartData),
-      assetContent: getAssetContent
+      assetContent: getAssetContent,
+      reportType: opts.reportType
     },
     (err, reportHtml) => {
       if (err) return logger.error(err);

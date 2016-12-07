@@ -43,6 +43,12 @@ const program = commander
     'report.html'
   )
   .option(
+    '-t, --reportType <type>',
+    'Type of report to generate. Can be either `voronoi` or `sunburst`.' +
+    br('Default is `voronoi`.'),
+    'voronoi'
+  )
+  .option(
     '-O, --no-open',
     "Don't open report in default browser automatically."
   )
@@ -52,6 +58,7 @@ let {
   mode,
   port,
   report: reportFilename,
+  reportType,
   open: openBrowser,
   args: [bundleStatsFile, bundleDir]
 } = program;
@@ -76,13 +83,15 @@ if (mode === 'server') {
   viewer.startServer(bundleStats, {
     openBrowser,
     port,
-    bundleDir
+    bundleDir,
+    reportType
   });
 } else {
   viewer.generateReport(bundleStats, {
     openBrowser,
     reportFilename: resolve(reportFilename),
-    bundleDir
+    bundleDir,
+    reportType
   });
 }
 
