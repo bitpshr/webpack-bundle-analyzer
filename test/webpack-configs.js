@@ -68,8 +68,8 @@ describe('Webpack config', function () {
     clock.tick(1);
 
     await expectValidReport({
-      parsedSize: 445,
-      gzipSize: 183
+      parsedSize: 439,
+      gzipSize: 179
     });
   });
 });
@@ -79,9 +79,9 @@ async function expectValidReport(opts) {
     bundleFilename = 'bundle.js',
     reportFilename = 'report.html',
     bundleLabel = 'bundle.js',
-    statSize = 147,
-    parsedSize = 2782,
-    gzipSize = 799
+    statSize = 141,
+    parsedSize = 2776,
+    gzipSize = 796
   } = opts || {};
 
   expect(fs.existsSync(`${__dirname}/output/${bundleFilename}`)).to.be.true;
@@ -89,10 +89,8 @@ async function expectValidReport(opts) {
   const chartData = await nightmare
     .goto(`file://${__dirname}/output/${reportFilename}`)
     .evaluate(() => window.chartData);
-  expect(chartData[0]).to.containSubset({
-    label: bundleLabel,
-    statSize,
-    parsedSize,
-    gzipSize
-  });
+  expect(chartData[0].label).to.eql(bundleLabel);
+  expect(chartData[0].statSize).to.be.within(statSize - 10, statSize + 10);
+  expect(chartData[0].parsedSize).to.be.within(parsedSize - 10, parsedSize + 10);
+  expect(chartData[0].gzipSize).to.be.within(gzipSize - 10, gzipSize + 10);
 }
