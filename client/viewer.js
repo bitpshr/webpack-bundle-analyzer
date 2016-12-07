@@ -2,11 +2,12 @@ import * as d3 from 'd3';
 import filesize from 'filesize';
 
 /* eslint no-unused-vars: 'off' */
-import styles from './viewer.css';
+import css from './viewer.css';
 
 window.addEventListener('load', () => {
-  const width = document.body.offsetWidth;
-  const height = document.body.offsetHeight;
+  const node = document.body.querySelector('#app');
+  const width = Math.min(node.offsetWidth, node.offsetHeight);
+  const height = width;
   const radius = Math.min(width, height) / 2;
   const x = d3.scale.linear().range([0, 2 * Math.PI]);
   const y = d3.scale.sqrt().range([0, radius]);
@@ -28,9 +29,9 @@ window.addEventListener('load', () => {
     .innerRadius(d => { return Math.max(0, y(d.y)); })
     .outerRadius(d => { return Math.max(0, y(d.y + d.dy)); });
 
-  const tooltip = d3.select('#app')
-    .append('div')
-    .attr('class', 'info');
+  const tooltip = d3.select('body')
+    .insert('div', ':first-child')
+    .attr('class', css.info);
 
   function onClick(d) {
     path.transition()
@@ -40,17 +41,33 @@ window.addEventListener('load', () => {
 
   function onMouseOver(d) {
     tooltip.html(() => {
-      return `${ d.label } (${ filesize(d.value) })`;
+      return `
+        <div class="${ css.infoInner }">
+          <div class="${ css.filename }">${ d.label }</div>
+          <div class="${ css.contents }">
+            <div class="${ css.size }">${ filesize(d.statSize) }</div>
+            <div class="${ css.type }">stat</div>
+            <div class="${ css.size }">${ filesize(d.parsedSize) }</div>
+            <div class="${ css.type }">parsed</div>
+            <div class="${ css.size }">${ filesize(d.gzipSize) }</div>
+            <div class="${ css.type }">gzip</div>
+          </div>
+        </div>
+      `;
     });
     return tooltip;
   }
 
-  function onMouseMove() {
+  function onMouseMove(d) {
+    console.log(x(d.x), y(d.y));
+
+            // .style("top", (d3.event.pageY-10)+"px")
+            // .style("left", (d3.event.pageX+10)+"px");
     return tooltip;
   }
 
   function onMouseOut() {
-    return tooltip.html('');
+    // return tooltip.html('');
   }
 
   function arcTween(d) {
