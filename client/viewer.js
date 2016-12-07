@@ -7,7 +7,7 @@ import css from './viewer.css';
 window.addEventListener('load', () => {
   const node = document.body.querySelector('#app');
   const width = Math.min(node.offsetWidth, node.offsetHeight);
-  const height = width;
+  const height = width + 50;
   const radius = Math.min(width, height) / 2;
   const x = d3.scale.linear().range([0, 2 * Math.PI]);
   const y = d3.scale.sqrt().range([0, radius]);
@@ -59,10 +59,6 @@ window.addEventListener('load', () => {
   }
 
   function onMouseMove(d) {
-    console.log(x(d.x), y(d.y));
-
-            // .style("top", (d3.event.pageY-10)+"px")
-            // .style("left", (d3.event.pageX+10)+"px");
     return tooltip;
   }
 
