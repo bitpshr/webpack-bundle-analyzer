@@ -1,6 +1,6 @@
 {
   "name": "webpack-bundle-analyzer-sunburst",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Webpack plugin and CLI utility that represents bundle content either as an interactive zoomable treemap or a sunburst chart",
   "author": "Paul Bouchon <paul@paulbouchon.net>",
   "license": "MIT",
