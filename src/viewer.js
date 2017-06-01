@@ -75,35 +75,42 @@ function generateReport(bundleStats, opts) {
 
   if (!chartData) return;
 
-  ejs.renderFile(
-    `${projectRoot}/views/viewer.ejs`,
-    {
-      mode: 'static',
-      chartData: JSON.stringify(chartData),
-      assetContent: getAssetContent,
-      reportType: opts.reportType
-    },
-    (err, reportHtml) => {
-      if (err) return logger.error(err);
+  chartData.forEach((data, index) => {
+    const bundleFilename = data && data.label && data.label.split('/').slice(-1)[0];
+    const bundleName = (bundleFilename && bundleFilename.split(/\.js$/)[0]) || `bundle-${index}`;
+    const filename = chartData.length > 1 ? `${reportFilename.split(/\.html$/)[0]}-${bundleName}.html` : reportFilename;
 
-      let reportFilepath = reportFilename;
+    ejs.renderFile(
+      `${projectRoot}/views/viewer.ejs`,
+      {
+        mode: 'static',
+        chartData: JSON.stringify([ data ]),
+        assetContent: getAssetContent,
+        reportType: opts.reportType
+      },
+      (err, reportHtml) => {
+        if (err) return logger.error(err);
 
-      if (!path.isAbsolute(reportFilepath)) {
-        reportFilepath = path.resolve(bundleDir || process.cwd(), reportFilepath);
+        let reportFilepath = filename;
+
+        if (!path.isAbsolute(reportFilepath)) {
+          reportFilepath = path.resolve(bundleDir || process.cwd(), reportFilepath);
+        }
+
+        mkdir.sync(path.dirname(reportFilepath));
+        fs.writeFileSync(reportFilepath, reportHtml);
+
+        logger.info(
+          `${bold('Webpack Bundle Analyzer')} saved report to ${bold(reportFilepath)}`
+        );
+
+        if (openBrowser) {
+          opener(`file://${reportFilepath}`);
+        }
       }
+    );
+  });
 
-      mkdir.sync(path.dirname(reportFilepath));
-      fs.writeFileSync(reportFilepath, reportHtml);
-
-      logger.info(
-        `${bold('Webpack Bundle Analyzer')} saved report to ${bold(reportFilepath)}`
-      );
-
-      if (openBrowser) {
-        opener(`file://${reportFilepath}`);
-      }
-    }
-  );
 }
 
 function getAssetContent(filename) {
