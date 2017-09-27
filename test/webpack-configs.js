@@ -69,7 +69,8 @@ describe('Webpack config', function () {
 
     await expectValidReport({
       parsedSize: 439,
-      gzipSize: 179
+      gzipSize: 179,
+      multipleChunks: true
     });
   });
 });
@@ -77,12 +78,16 @@ describe('Webpack config', function () {
 async function expectValidReport(opts) {
   const {
     bundleFilename = 'bundle.js',
-    reportFilename = 'report.html',
     bundleLabel = 'bundle.js',
     statSize = 141,
     parsedSize = 2776,
-    gzipSize = 796
+    gzipSize = 796,
+    multipleChunks,
+    reportFilename = multipleChunks ? 'report-bundle.html' : 'report.html'
   } = opts || {};
+
+  console.log(`${__dirname}/output/${bundleFilename}`);
+  console.log(`${__dirname}/output/${reportFilename}`);
 
   expect(fs.existsSync(`${__dirname}/output/${bundleFilename}`)).to.be.true;
   expect(fs.existsSync(`${__dirname}/output/${reportFilename}`)).to.be.true;
