@@ -25,7 +25,7 @@ describe('Webpack config', function () {
   });
 
   afterEach(function () {
-    // del.sync(`${__dirname}/output`);
+    del.sync(`${__dirname}/output`);
   });
 
   after(function () {
