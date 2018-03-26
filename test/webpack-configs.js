@@ -4,15 +4,11 @@ const del = require('del');
 let nightmare;
 
 describe('Webpack config', function () {
-  // `Nightmare` doesn't support Node less than v4 so we have to skip these tests
-  const shouldSkip = process.versions.node.startsWith('0.');
   let clock;
 
   this.timeout(3000);
 
-  before(async function () {
-    if (shouldSkip) return this.skip();
-
+  before(function () {
     const Nightmare = require('nightmare');
     nightmare = Nightmare();
     del.sync(`${__dirname}/output`);
@@ -29,21 +25,7 @@ describe('Webpack config', function () {
   });
 
   after(function () {
-    if (shouldSkip) return;
     clock.restore();
-  });
-
-  it('with head slash in bundle filename should be supported', async function () {
-    const config = makeWebpackConfig();
-
-    config.output.filename = '/bundle.js';
-
-    await webpackCompile(config);
-    clock.tick(1);
-
-    await expectValidReport({
-      bundleLabel: '/bundle.js'
-    });
   });
 
   it('with query in bundle filename should be supported', async function () {
@@ -68,34 +50,54 @@ describe('Webpack config', function () {
     clock.tick(1);
 
     await expectValidReport({
-      parsedSize: 439,
-      gzipSize: 179,
-      multipleChunks: true
+      parsedSize: 445,
+      gzipSize: 178
     });
+  });
+
+  it('with `multi` module should be supported', async function () {
+    const config = makeWebpackConfig();
+
+    config.entry.bundle = [
+      './src/a.js',
+      './src/b.js'
+    ];
+
+    await webpackCompile(config);
+    clock.tick(1);
+
+    const chartData = await getChartDataFromReport();
+    expect(chartData[0].groups).to.containSubset([{
+      label: 'multi ./src/a.js ./src/b.js',
+      path: './multi ./src/a.js ./src/b.js',
+      groups: undefined
+    }]);
   });
 });
 
 async function expectValidReport(opts) {
   const {
     bundleFilename = 'bundle.js',
+    reportFilename = 'report.html',
     bundleLabel = 'bundle.js',
     statSize = 141,
-    parsedSize = 2776,
-    gzipSize = 796,
-    multipleChunks,
-    reportFilename = multipleChunks ? 'report-bundle.html' : 'report.html'
+    parsedSize = 2821,
+    gzipSize = 770
   } = opts || {};
-
-  console.log(`${__dirname}/output/${bundleFilename}`);
-  console.log(`${__dirname}/output/${reportFilename}`);
 
   expect(fs.existsSync(`${__dirname}/output/${bundleFilename}`)).to.be.true;
   expect(fs.existsSync(`${__dirname}/output/${reportFilename}`)).to.be.true;
-  const chartData = await nightmare
+  const chartData = await getChartDataFromReport(reportFilename);
+  expect(chartData[0]).to.containSubset({
+    label: bundleLabel,
+    statSize,
+    parsedSize,
+    gzipSize
+  });
+}
+
+async function getChartDataFromReport(reportFilename = 'report.html') {
+  return await nightmare
     .goto(`file://${__dirname}/output/${reportFilename}`)
     .evaluate(() => window.chartData);
-  expect(chartData[0].label).to.eql(bundleLabel);
-  expect(chartData[0].statSize).to.be.within(statSize - 10, statSize + 10);
-  expect(chartData[0].parsedSize).to.be.within(parsedSize - 10, parsedSize + 10);
-  expect(chartData[0].gzipSize).to.be.within(gzipSize - 10, gzipSize + 10);
 }

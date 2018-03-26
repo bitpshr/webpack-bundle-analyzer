@@ -4,6 +4,10 @@
   height: 100%;
 }
 
-.sizesSwitcher {
-  padding: 3px 10px 2px;
+.sidebarGroup {
+  margin-bottom: 20px;
+}
+
+.activeSize {
+  font-weight: bold;
 }

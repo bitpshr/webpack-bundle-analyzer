@@ -6,6 +6,7 @@ import Treemap from './Treemap';
 import Tooltip from './Tooltip';
 import Switcher from './Switcher';
 import Sidebar from './Sidebar';
+import CheckboxList from './CheckboxList';
 
 import s from './ModulesTreemap.css';
 
@@ -19,29 +20,36 @@ export default class ModulesTreemap extends Component {
 
   constructor(props) {
     super(props);
-    this.treemap = null;
-    this.hasParsedSizes = (typeof this.props.data[0].parsedSize === 'number');
-    this.sizeSwitchItems = this.hasParsedSizes ? SIZE_SWITCH_ITEMS : SIZE_SWITCH_ITEMS.slice(0, 1);
-    this.state = {
-      showTooltip: false,
-      tooltipContent: null,
-      activeSizeItem: SIZE_SWITCH_ITEMS.find(item =>
-        item.label === (this.hasParsedSizes ? 'Parsed' : 'Stat')
-      )
-    };
+    this.setData(props.data, true);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.data !== this.props.data) {
+      this.setData(newProps.data);
+    }
   }
 
   render() {
-    const { data } = this.props;
-    const { showTooltip, tooltipContent, activeSizeItem } = this.state;
+    const { data, showTooltip, tooltipContent, activeSizeItem } = this.state;
 
     return (
       <div className={s.container}>
         <Sidebar>
-          <Switcher label="Treemap sizes"
-            items={this.sizeSwitchItems}
-            activeItem={activeSizeItem}
-            onSwitch={this.handleSizeSwitch}/>
+          <div className={s.sidebarGroup}>
+            <Switcher label="Treemap sizes"
+              items={this.sizeSwitchItems}
+              activeItem={activeSizeItem}
+              onSwitch={this.handleSizeSwitch}/>
+          </div>
+          {this.state.chunkItems.length > 1 &&
+            <div className={s.sidebarGroup}>
+              <CheckboxList label="Show chunks"
+                items={this.state.chunkItems}
+                checkedItems={this.visibleChunkItems}
+                renderLabel={this.renderChunkItemLabel}
+                onChange={this.handleVisibleChunksChange}/>
+            </div>
+          }
         </Sidebar>
         <Treemap className={s.map}
           data={data}
@@ -55,8 +63,37 @@ export default class ModulesTreemap extends Component {
     );
   }
 
-  handleSizeSwitch = (sizeSwitchItem) => {
+  renderModuleSize(module, sizeType) {
+    const sizeProp = `${sizeType}Size`;
+    const size = module[sizeProp];
+    const sizeLabel = SIZE_SWITCH_ITEMS.find(item => item.prop === sizeProp).label;
+    const isActive = (this.state.activeSizeItem.prop === sizeProp);
+
+    return (typeof size === 'number') ?
+      <div className={isActive ? s.activeSize : ''}>
+        {sizeLabel} size: <strong>{filesize(size)}</strong>
+      </div>
+      :
+      null;
+  }
+
+  renderChunkItemLabel = (item, labelClass) => {
+    const isAllItem = (item === CheckboxList.ALL_ITEM);
+    const label = isAllItem ? 'All' : item.label;
+    const size = isAllItem ? this.totalChunksSize : item[this.state.activeSizeItem.prop];
+
+    return (
+      <span className={labelClass}>{label} (<strong>{filesize(size)}</strong>)</span>
+    );
+  };
+
+  handleSizeSwitch = sizeSwitchItem => {
     this.setState({ activeSizeItem: sizeSwitchItem });
+  };
+
+  handleVisibleChunksChange = visibleChunkItems => {
+    this.visibleChunkItems = visibleChunkItems;
+    this.setState({ data: this.getVisibleChunksData() });
   };
 
   handleMouseLeaveTreemap = () => {
@@ -76,22 +113,52 @@ export default class ModulesTreemap extends Component {
     }
   };
 
+  get totalChunksSize() {
+    const sizeProp = this.state.activeSizeItem.prop;
+    return this.props.data.reduce((totalSize, chunk) => totalSize + chunk[sizeProp], 0);
+  }
+
+  setData(data, initial) {
+    const hasParsedSizes = (typeof data[0].parsedSize === 'number');
+    this.sizeSwitchItems = hasParsedSizes ? SIZE_SWITCH_ITEMS : SIZE_SWITCH_ITEMS.slice(0, 1);
+    const activeSizeItemProp = initial ? `${this.props.defaultSizes}Size` : this.state.activeSizeItem.prop;
+    let activeSizeItem = this.sizeSwitchItems.find(item => item.prop === activeSizeItemProp);
+    if (!activeSizeItem) activeSizeItem = this.sizeSwitchItems[0];
+
+    const chunkItems = [...data]
+      .sort((chunk1, chunk2) => chunk2[activeSizeItem.prop] - chunk1[activeSizeItem.prop]);
+
+    if (initial) {
+      this.visibleChunkItems = chunkItems;
+    }
+
+    this.setState({
+      data: this.getVisibleChunksData(),
+      showTooltip: false,
+      tooltipContent: null,
+      activeSizeItem,
+      chunkItems
+    });
+  }
+
+  getVisibleChunksData() {
+    return this.props.data.filter(chunk =>
+      this.visibleChunkItems.find(item => item.label === chunk.label)
+    );
+  }
+
   getTooltipContent(module) {
     if (!module) return null;
 
     return (
       <div>
-        <div><b>{module.label}</b></div>
+        <div><strong>{module.label}</strong></div>
         <br/>
-        <div>Stat size: <b>{filesize(module.statSize)}</b></div>
-        {(typeof module.parsedSize === 'number') &&
-          <div>Parsed size: <b>{filesize(module.parsedSize)}</b></div>
-        }
-        {(typeof module.gzipSize === 'number') &&
-          <div>Gzip size: <b>{filesize(module.gzipSize)}</b></div>
-        }
+        {this.renderModuleSize(module, 'stat')}
+        {!module.inaccurateSizes && this.renderModuleSize(module, 'parsed')}
+        {!module.inaccurateSizes && this.renderModuleSize(module, 'gzip')}
         {module.path &&
-          <div>Path: <b>{module.path}</b></div>
+          <div>Path: <strong>{module.path}</strong></div>
         }
       </div>
     );

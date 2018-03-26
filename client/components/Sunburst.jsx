@@ -80,7 +80,7 @@ export default class Sunburst extends Component {
     const color = d3.scale.category20c();
     const width = Math.min(sunburst.offsetWidth, sunburst.offsetHeight);
     const height = width + 50;
-    
+
     this.radius = Math.min(width, height) / 2;
     this.x = d3.scale.linear().range([0, 2 * Math.PI]);
     this.y = d3.scale.sqrt().range([0, this.radius]);
@@ -93,14 +93,14 @@ export default class Sunburst extends Component {
       .attr('transform', `translate(${ width / 2 }, ${ (height / 2 + 10) })`);
 
     const partition = d3.layout.partition()
-      .value(d => { return d.statSize; })
-      .children(d => { return d.groups; });
+      .value(d => d.statSize)
+      .children(d => d.groups);
 
     this.arc = d3.svg.arc()
-      .startAngle(d => { return Math.max(0, Math.min(2 * Math.PI, this.x(d.x))); })
-      .endAngle(d => { return Math.max(0, Math.min(2 * Math.PI, this.x(d.x + d.dx))); })
-      .innerRadius(d => { return Math.max(0, this.y(d.y)); })
-      .outerRadius(d => { return Math.max(0, this.y(d.y + d.dy)); });
+      .startAngle(d => Math.max(0, Math.min(2 * Math.PI, this.x(d.x))))
+      .endAngle(d => Math.max(0, Math.min(2 * Math.PI, this.x(d.x + d.dx))))
+      .innerRadius(d => Math.max(0, this.y(d.y)))
+      .outerRadius(d => Math.max(0, this.y(d.y + d.dy)));
 
     this.tooltip = d3.select(this.node)
       .insert('div', ':first-child')
@@ -108,9 +108,10 @@ export default class Sunburst extends Component {
 
     this.path = svg.selectAll('path')
       .data(partition.nodes(this.props.data[0]))
-      .enter().append('path')
+      .enter()
+      .append('path')
       .attr('d', this.arc)
-      .style('fill', d => { return color((d.children ? d : d.parent).label); })
+      .style('fill', d => color(((d.children || !d.parent) ? d : d.parent).label))
       .on('click', this.onClick.bind(this))
       .on('mouseover', this.onMouseOver.bind(this))
       .on('mousemove', this.onMouseMove.bind(this));

@@ -8,6 +8,9 @@ const { magenta } = require('chalk');
 
 const analyzer = require('../analyzer');
 const viewer = require('../viewer');
+const Logger = require('../Logger');
+
+const SIZES = new Set(['stat', 'parsed', 'gzip']);
 
 const program = commander
   .version(require('../../package.json').version)
@@ -25,22 +28,30 @@ const program = commander
     '-m, --mode <mode>',
     'Analyzer mode. Should be `server` or `static`.' +
     br('In `server` mode analyzer will start HTTP server to show bundle report.') +
-    br('In `static` mode single HTML file with bundle report will be generated.') +
-    br('Default is `server`.'),
+    br('In `static` mode single HTML file with bundle report will be generated.'),
     'server'
   )
   .option(
+    '-h, --host <host>',
+    'Host that will be used in `server` mode to start HTTP server.',
+    '127.0.0.1'
+  )
+  .option(
     '-p, --port <n>',
-    'Port that will be used in `server` mode to start HTTP server.' +
-    br('Default is 8888.'),
+    'Port that will be used in `server` mode to start HTTP server.',
     Number,
     8888
   )
   .option(
     '-r, --report <file>',
-    'Path to bundle report file that will be generated in `static` mode.' +
-    br('Default is `report.html`.'),
+    'Path to bundle report file that will be generated in `static` mode.',
     'report.html'
+  )
+  .option(
+    '-s, --default-sizes <type>',
+    'Module sizes to show in treemap by default.' +
+    br(`Possible values: ${[...SIZES].join(', ')}`),
+    'parsed'
   )
   .option(
     '-t, --reportType <type>',
@@ -52,20 +63,32 @@ const program = commander
     '-O, --no-open',
     "Don't open report in default browser automatically."
   )
+  .option(
+    '-l, --log-level <level>',
+    'Log level.' +
+    br(`Possible values: ${[...Logger.levels].join(', ')}`),
+    Logger.defaultLevel
+  )
   .parse(process.argv);
 
 let {
   mode,
+  host,
   port,
   report: reportFilename,
+  defaultSizes,
+  logLevel,
   reportType,
   open: openBrowser,
   args: [bundleStatsFile, bundleDir]
 } = program;
+const logger = new Logger(logLevel);
 
 if (!bundleStatsFile) showHelp('Provide path to Webpack Stats file as first argument');
 if (mode !== 'server' && mode !== 'static') showHelp('Invalid mode. Should be either `server` or `static`.');
+if (mode === 'server' && !host) showHelp('Invalid host name');
 if (mode === 'server' && isNaN(port)) showHelp('Invalid port number');
+if (!SIZES.has(defaultSizes)) showHelp(`Invalid default sizes option. Possible values are: ${[...SIZES].join(', ')}`);
 
 bundleStatsFile = resolve(bundleStatsFile);
 
@@ -75,7 +98,8 @@ let bundleStats;
 try {
   bundleStats = analyzer.readStatsFromFile(bundleStatsFile);
 } catch (err) {
-  console.error(`Could't read webpack bundle stats from "${bundleStatsFile}":\n${err}`);
+  logger.error(`Could't read webpack bundle stats from "${bundleStatsFile}":\n${err}`);
+  logger.debug(err.stack);
   process.exit(1);
 }
 
@@ -83,6 +107,9 @@ if (mode === 'server') {
   viewer.startServer(bundleStats, {
     openBrowser,
     port,
+    host,
+    defaultSizes,
+    logger: new Logger(logLevel),
     bundleDir,
     reportType
   });
@@ -90,6 +117,8 @@ if (mode === 'server') {
   viewer.generateReport(bundleStats, {
     openBrowser,
     reportFilename: resolve(reportFilename),
+    defaultSizes,
+    logger: new Logger(logLevel),
     bundleDir,
     reportType
   });
@@ -102,5 +131,5 @@ function showHelp(error) {
 }
 
 function br(str) {
-  return `\n${_.repeat(' ', 21)}${str}`;
+  return `\n${_.repeat(' ', 28)}${str}`;
 }

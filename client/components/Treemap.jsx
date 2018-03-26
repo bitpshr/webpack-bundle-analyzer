@@ -17,8 +17,14 @@ export default class Treemap extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.weightProp !== this.props.weightProp) {
+    if (nextProps.data !== this.props.data) {
+      this.setWeightProp(nextProps.weightProp, nextProps.data);
+      this.treemap.set({
+        dataObject: { groups: nextProps.data }
+      });
+    } else if (nextProps.weightProp !== this.props.weightProp) {
       this.setWeightProp(nextProps.weightProp);
+      this.update();
     }
   }
 
@@ -48,6 +54,7 @@ export default class Treemap extends Component {
       element: this.node,
       layout: 'squarified',
       stacking: 'flattened',
+      pixelRatio: window.devicePixelRatio || 1,
       maxGroupLevelsDrawn: Number.MAX_VALUE,
       maxGroupLabelLevelsDrawn: Number.MAX_VALUE,
       groupLabelVerticalPadding: 0.2,
@@ -95,12 +102,14 @@ export default class Treemap extends Component {
     });
   }
 
-  setWeightProp(prop) {
-    this.props.data.forEach(setProp);
+  update() {
+    this.treemap.update();
+  }
 
-    if (this.treemap) {
-      this.treemap.update();
-    }
+  setWeightProp(prop, data) {
+    data = data || this.props.data;
+
+    data.forEach(setProp);
 
     function setProp(group) {
       group.weight = group[prop];

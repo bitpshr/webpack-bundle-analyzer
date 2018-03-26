@@ -5,8 +5,8 @@ const _ = require('lodash');
 const gzipSize = require('gzip-size');
 
 const Logger = require('./Logger');
-const { Folder } = require('../lib/tree');
-const { parseBundle } = require('../lib/parseUtils');
+const Folder = require('./tree/Folder').default;
+const { parseBundle } = require('./parseUtils');
 
 const FILENAME_QUERY_REGEXP = /\?.*$/;
 
@@ -20,6 +20,11 @@ function getViewerData(bundleStats, bundleDir, opts) {
     logger = new Logger()
   } = opts || {};
 
+  // Sometimes all the information is located in `children` array (e.g. problem in #10)
+  if (_.isEmpty(bundleStats.assets) && !_.isEmpty(bundleStats.children)) {
+    bundleStats = bundleStats.children[0];
+  }
+
   // Picking only `*.js` assets from bundle that has non-empty `chunks` array
   bundleStats.assets = _.filter(bundleStats.assets, asset => {
     // Removing query part from filename (yes, somebody uses it for some reason and Webpack supports it)
@@ -30,11 +35,13 @@ function getViewerData(bundleStats, bundleDir, opts) {
   });
 
   // Trying to parse bundle assets and get real module sizes if `bundleDir` is provided
-  let parsedModuleSizes = null;
-  let bundlesSources = {};
-  let parsedModules = {};
+  let bundlesSources = null;
+  let parsedModules = null;
 
   if (bundleDir) {
+    bundlesSources = {};
+    parsedModules = {};
+
     for (const statAsset of bundleStats.assets) {
       const assetFile = path.join(bundleDir, statAsset.name);
       let bundleInfo;
@@ -45,10 +52,7 @@ function getViewerData(bundleStats, bundleDir, opts) {
         bundleInfo = null;
       }
 
-      if (bundleInfo) {
-        bundlesSources[statAsset.name] = bundleInfo.src;
-        _.assign(parsedModules, bundleInfo.modules);
-      } else {
+      if (!bundleInfo) {
         logger.warn(
           `\nCouldn't parse bundle asset "${assetFile}".\n` +
           'Analyzer will use module sizes from stats file.\n'
@@ -57,15 +61,9 @@ function getViewerData(bundleStats, bundleDir, opts) {
         bundlesSources = null;
         break;
       }
-    }
 
-    if (parsedModules) {
-      parsedModuleSizes = _.mapValues(parsedModules,
-        moduleSrc => ({
-          raw: moduleSrc.length,
-          gzip: gzipSize.sync(moduleSrc)
-        })
-      );
+      bundlesSources[statAsset.name] = bundleInfo.src;
+      _.assign(parsedModules, bundleInfo.modules);
     }
   }
 
@@ -81,9 +79,8 @@ function getViewerData(bundleStats, bundleDir, opts) {
     asset.modules = _(bundleStats.modules)
       .filter(statModule => assetHasModule(statAsset, statModule))
       .each(statModule => {
-        if (parsedModuleSizes) {
-          statModule.parsedSize = parsedModuleSizes[statModule.id].raw;
-          statModule.gzipSize = parsedModuleSizes[statModule.id].gzip;
+        if (parsedModules) {
+          statModule.parsedSrc = parsedModules[statModule.id];
         }
       });
 
@@ -119,27 +116,7 @@ function assetHasModule(statAsset, statModule) {
 function createModulesTree(modules) {
   const root = new Folder('.');
 
-  _.each(modules, module => {
-    const path = getModulePath(module.name);
-
-    if (path) {
-      root.addModuleByPath(path, module);
-    }
-  });
+  _.each(modules, module => root.addModule(module));
 
   return root;
-}
-
-function getModulePath(path) {
-  const parsedPath = _
-    // Removing loaders from module path: they're joined by `!` and the last part is a raw module path
-    .last(path.split('!'))
-    // Splitting module path into parts
-    .split('/')
-    // Removing first `.`
-    .slice(1)
-    // Replacing `~` with `node_modules`
-    .map(part => (part === '~') ? 'node_modules' : part);
-
-  return parsedPath.length ? parsedPath : null;
 }
