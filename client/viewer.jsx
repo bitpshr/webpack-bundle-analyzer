@@ -33,11 +33,8 @@ window.addEventListener('load', () => {
 let app;
 function renderApp(chartData) {
   app = render(
-    <div id="app">
-      {window.reportType === 'treemap' && <ModulesTreemap data={chartData} defaultSizes={window.defaultSizes}/>}
-      {window.reportType === 'sunburst' && <Sunburst data={chartData}/>}
-    </div>,
-    document.body,
-    app
+    window.reportType === 'sunburst' ?
+      <Sunburst data={chartData}/> : <ModulesTreemap data={chartData} defaultSizes={window.defaultSizes}/>,
+    document.getElementById('app')
   );
 }

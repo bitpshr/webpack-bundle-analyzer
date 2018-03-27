@@ -37,7 +37,6 @@ export default class Sunburst extends Component {
     this.tooltip.html(() => {
       return `
         <div class="${ css.infoInner }">
-          <div class="${ css.filename }">${ d.label }</div>
           <div class="${ css.contents }">
             <div class="${ css.size }">${ filesize(d.statSize) }</div>
             <div class="${ css.type }">stat</div>
@@ -46,6 +45,7 @@ export default class Sunburst extends Component {
             <div class="${ css.size }">${ filesize(d.gzipSize) }</div>
             <div class="${ css.type }">gzip</div>
           </div>
+          <div class="${ css.filename }">${ d.label }</div>
         </div>
       `;
     });

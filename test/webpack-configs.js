@@ -50,6 +50,7 @@ describe('Webpack config', function () {
     clock.tick(1);
 
     await expectValidReport({
+      reportFilename: 'report-bundle.html',
       parsedSize: 445,
       gzipSize: 178
     });

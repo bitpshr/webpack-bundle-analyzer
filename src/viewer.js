@@ -118,13 +118,21 @@ function generateReport(bundleStats, opts) {
   } = opts || {};
 
   const chartData = getChartData(logger, bundleStats, bundleDir);
+  const usedNames = {};
 
   if (!chartData) return;
 
   chartData.forEach((data, index) => {
     const bundleFilename = data && data.label && data.label.split('/').slice(-1)[0];
-    const bundleName = (bundleFilename && bundleFilename.split(/\.js$/)[0]) || `bundle-${index}`;
+    const bundleName = bundleFilename.split('.').reduce((name, next) => {
+      if (name && !name[usedNames]) {
+        return name;
+      } else {
+        return name ? `${name}.${next}` : next;
+      }
+    }, '') || `bundle-${index}`;
     const filename = chartData.length > 1 ? `${reportFilename.split(/\.html$/)[0]}-${bundleName}.html` : reportFilename;
+    usedNames[bundleName] = true;
 
     ejs.renderFile(
       `${projectRoot}/views/viewer.ejs`,

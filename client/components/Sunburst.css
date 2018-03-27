@@ -47,26 +47,31 @@ path {
 .infoInner {
 	line-height: 1;
 	font-weight: lighter;
+	text-align: right;
 	position: absolute;
+	width: 100%;
 	top: 50%;
 	right: 0%;
 	transform: translateY(-50%);
-	padding: 100px;
 	white-space: nowrap;
 }
 
 .filename {
+	width: auto;
+	overflow: hidden;
 	font-size: 30px;
-	display: inline-block;
 	vertical-align: top;
 	padding-right: 40px;
+	white-space: normal;
+	word-break: break-all;
 }
 
 .contents {
-	display: inline-block;
+	float: right;
 	vertical-align: top;
 	border-left: 1px solid #898989;
 	padding-left: 40px;
+	padding-right: 10px;
 }
 
 .size {
