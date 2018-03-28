@@ -54,10 +54,7 @@ class BundleAnalyzerPlugin {
       }
 
       if (actions.length) {
-        // Making analyzer logs to be after all webpack logs in the console
-        setImmediate(() => {
-          actions.forEach(action => action());
-        });
+        actions.forEach(action => action());
       }
     };
 
